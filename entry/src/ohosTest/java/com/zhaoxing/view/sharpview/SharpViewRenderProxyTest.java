@@ -43,13 +43,13 @@ public class SharpViewRenderProxyTest {
         context = AbilityDelegatorRegistry.getAbilityDelegator().getAppContext();
         attrSet = new AttrSet() {
             @Override
-            public Optional<String> getStyle() {
-                return Optional.empty();
+            public int getLength() {
+                return 0;
             }
 
             @Override
-            public int getLength() {
-                return 0;
+            public Optional<String> getStyle() {
+                return Optional.empty();
             }
 
             @Override

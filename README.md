@@ -1,6 +1,6 @@
 # SharpView
 
-custom TextView,LinearLayout,RelativeLayout with sharp
+It is a HMOS Library which provides a Custom TextView,LinearLayout,RelativeLayout with sharpView
 
 [![.github/workflows/main.yml](https://github.com/applibgroup/SharpView/actions/workflows/main.yml/badge.svg)](https://github.com/applibgroup/SharpView/actions/workflows/main.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=applibgroup_SharpView&metric=alert_status)](https://sonarcloud.io/dashboard?id=applibgroup_SharpView)
@@ -34,7 +34,7 @@ Gradient colors are only valid when sharpSize is 0 (no sharp corners)
 
 ## Dependency
 1. For using SharpView module in sample app, include the source code and add the below dependencies in entry/build.gradle to generate hap/support.har.
-```
+```groovy
 	dependencies {
 		implementation project(':sharpview')
         	implementation fileTree(dir: 'libs', include: ['*.har'])
@@ -42,7 +42,7 @@ Gradient colors are only valid when sharpSize is 0 (no sharp corners)
 	}
 ```
 2. For using SharpView in separate application using har file, add the har file in the entry/libs folder and add the dependencies in entry/build.gradle file.
-```
+```groovy
 	dependencies {
 		implementation fileTree(dir: 'libs', include: ['*.har'])
 		testCompile 'junit:junit:4.12'
@@ -53,7 +53,7 @@ Gradient colors are only valid when sharpSize is 0 (no sharp corners)
 ## Usage
 
 * 1.In the XML
-```java
+```xml
 
   <com.zhaoxing.view.sharpview.SharpEditText
         ohos:width="match_content"
@@ -77,10 +77,8 @@ Gradient colors are only valid when sharpSize is 0 (no sharp corners)
         app:arrowDirection="right"
         app:backgroundColor="#FF000000"
         app:relativePosition="0.9"
-        app:sharpSize="15vp">
-
-    </com.zhaoxing.view.sharpview.SharpLinearLayout>
-
+        app:sharpSize="15vp"
+	/>
 
 ```
 
