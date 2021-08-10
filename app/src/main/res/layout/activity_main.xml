@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/activity_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:paddingTop="100dp"
+                android:orientation="vertical"
+                android:background="@android:color/white">
+
+    <ImageView
+
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:scaleType="fitXY"/>
+
+    <com.zhaoxing.view.sharpview.SharpImageView
+        android:id="@+id/eee"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/test"
+        android:scaleType="fitXY"
+        app:left_bottom_radius="10dp"
+        app:border="2dp"
+        app:borderColor="@color/colorPrimary"
+        app:relativePosition="50%"
+        app:arrowDirection="right"
+        app:sharpSize="10dp"
+       />
+
+
+    <com.zhaoxing.view.sharpview.SharpTextView
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:textColor="@android:color/white"
+        android:text="54654654"
+        android:gravity="center"
+        app:radius="25dp"
+        app:startBgColor="#ffff0000"
+        app:middleBgColor="#ffff00ff"
+        app:endBgColor="#ffffff00"/>
+
+    <com.zhaoxing.view.sharpview.SharpTextView
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:textColor="@android:color/white"
+        android:text="this is a SharpTextView"
+        android:gravity="center"
+        android:textSize="18sp"
+        app:radius="5dp"
+        app:arrowDirection="bottom"
+        app:backgroundColor="#ffff0000"
+        app:relativePosition="20%"
+        app:sharpSize="0dp"
+        />
+
+    <com.zhaoxing.view.sharpview.SharpLinearLayout
+        android:id="@+id/sharp_ll"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:orientation="vertical"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:layout_marginTop="50dp"
+        android:padding="35dp"
+        app:radius="10dp"
+        app:border="2dp"
+        app:borderColor="#FF0000"
+        app:arrowDirection="left"
+        app:backgroundColor="#ff000000"
+        app:relativePosition="50%"
+        app:sharpSize="15dp"
+
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@android:color/holo_green_light"
+            android:text="a child inside the SharpLinearLayout"/>
+
+        <TextView
+            android:id="@+id/close_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="this is another child view"/>
+
+    </com.zhaoxing.view.sharpview.SharpLinearLayout>
+
+
+
+</LinearLayout>
