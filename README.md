@@ -1,9 +1,9 @@
+[![.github/workflows/main.yml](https://github.com/applibgroup/SharpView/actions/workflows/main.yml/badge.svg)](https://github.com/applibgroup/SharpView/actions/workflows/main.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=applibgroup_SharpView-Lib&metric=alert_status)](https://sonarcloud.io/dashboard?id=applibgroup_SharpView-Lib)
+
 # SharpView
 
 It is a HMOS Library which provides a Custom TextView,LinearLayout,RelativeLayout with sharpView
-
-[![.github/workflows/main.yml](https://github.com/applibgroup/SharpView/actions/workflows/main.yml/badge.svg)](https://github.com/applibgroup/SharpView/actions/workflows/main.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=applibgroup_SharpView&metric=alert_status)](https://sonarcloud.io/dashboard?id=applibgroup_SharpView)
 
 ## Source
 The code in this repository was inspired from [zengzhaoxing/SharpView - Release v2.4.7](https://github.com/zengzhaoxing/SharpView). 
