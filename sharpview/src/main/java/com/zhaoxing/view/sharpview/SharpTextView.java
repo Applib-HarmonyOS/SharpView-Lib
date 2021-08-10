@@ -1,29 +1,31 @@
 package com.zhaoxing.view.sharpview;
 
-import android.content.Context;
-import android.util.AttributeSet;
+import ohos.agp.components.AttrSet;
+import ohos.agp.components.Text;
+import ohos.app.Context;
 
-import com.rey.material.widget.TextView;
-
-public class SharpTextView extends TextView implements SharpView {
+/**
+ * SharpTextView.
+ */
+public class SharpTextView extends Text implements SharpView {
 
     public SharpTextView(Context context) {
         super(context);
-        init(context,null,0);
+        init(null);
     }
 
-    public SharpTextView(Context context, AttributeSet attrs) {
+    public SharpTextView(Context context, AttrSet attrs) {
         super(context, attrs);
-        init(context,attrs,0);
+        init(attrs);
     }
 
-    public SharpTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SharpTextView(Context context, AttrSet attrs, String defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs,defStyleAttr);
+        init(attrs);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr){
-        mSharpViewRenderProxy = new SharpViewRenderProxy(this, context, attrs, defStyleAttr);
+    private void init(AttrSet attrs) {
+        mSharpViewRenderProxy = new SharpViewRenderProxy(this, attrs);
     }
 
     private SharpViewRenderProxy mSharpViewRenderProxy;
