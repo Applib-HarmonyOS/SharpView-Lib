@@ -1,29 +1,31 @@
 package com.zhaoxing.view.sharpview;
 
-import android.content.Context;
-import android.util.AttributeSet;
+import ohos.agp.components.AttrSet;
+import ohos.agp.components.DependentLayout;
+import ohos.app.Context;
 
-import com.rey.material.widget.RelativeLayout;
-
-public class SharpRelativeLayout extends RelativeLayout implements SharpView {
+/**
+ * SharpRelativeLayout.
+ */
+public class SharpRelativeLayout extends DependentLayout implements SharpView {
 
     public SharpRelativeLayout(Context context) {
         super(context);
-        init(context,null,0);
+        init(null);
     }
 
-    public SharpRelativeLayout(Context context, AttributeSet attrs) {
+    public SharpRelativeLayout(Context context, AttrSet attrs) {
         super(context, attrs);
-        init(context,attrs,0);
+        init(attrs);
     }
 
-    public SharpRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SharpRelativeLayout(Context context, AttrSet attrs, String defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs,defStyleAttr);
+        init(attrs);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr){
-        mSharpViewRenderProxy = new SharpViewRenderProxy(this, context, attrs, defStyleAttr);
+    private void init(AttrSet attrs) {
+        mSharpViewRenderProxy = new SharpViewRenderProxy(this, attrs);
     }
 
     private SharpViewRenderProxy mSharpViewRenderProxy;

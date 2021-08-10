@@ -1,32 +1,31 @@
 package com.zhaoxing.view.sharpview;
 
-import android.content.Context;
-import android.support.v7.widget.AppCompatEditText;
-import android.util.AttributeSet;
+import ohos.agp.components.AttrSet;
+import ohos.agp.components.TextField;
+import ohos.app.Context;
 
 /**
  * Created by 曾宪梓 on 2017/12/28.
  */
-
-public class SharpEditText extends AppCompatEditText implements SharpView{
+public class SharpEditText extends TextField implements SharpView {
 
     public SharpEditText(Context context) {
         super(context);
-        init(context,null,0);
+        init(null);
     }
 
-    public SharpEditText(Context context, AttributeSet attrs) {
+    public SharpEditText(Context context, AttrSet attrs) {
         super(context, attrs);
-        init(context,attrs,0);
+        init(attrs);
     }
 
-    public SharpEditText(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SharpEditText(Context context, AttrSet attrs, String defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs,defStyleAttr);
+        init(attrs);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr){
-        mSharpViewRenderProxy = new SharpViewRenderProxy(this, context, attrs, defStyleAttr);
+    private void init(AttrSet attrs) {
+        mSharpViewRenderProxy = new SharpViewRenderProxy(this, attrs);
     }
 
     private SharpViewRenderProxy mSharpViewRenderProxy;

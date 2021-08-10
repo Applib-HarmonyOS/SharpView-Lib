@@ -1,26 +1,78 @@
 package com.zhaoxing.view.sharpview;
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.drawable.GradientDrawable;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ImageView;
+import static ohos.agp.components.Component.DrawTask.BETWEEN_BACKGROUND_AND_CONTENT;
+import ohos.agp.colors.RgbColor;
+import ohos.agp.colors.RgbPalette;
+import ohos.agp.components.AttrSet;
+import ohos.agp.components.Component;
+import ohos.agp.components.element.ShapeElement;
+import ohos.agp.render.Canvas;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-
+/**
+ * SharpViewRenderProxy.
+ */
 public class SharpViewRenderProxy {
 
-    private View mView;
+    private static final float DEFAULT_RADIUS = 0;
+    private static final float DEFAULT_CORNERRADII = 0;
+    private static final float DEFAULT_BORDER = 0;
+    private static final RgbColor DEFAULT_BACKGROUNDCOLOR = RgbPalette.TRANSPARENT;
+    private static final RgbColor DEFAULT_BORDERCOLOR = RgbPalette.TRANSPARENT;
+    private static final float DEFAULT_RELATIVEPOSITION = (float) 0.5;
+    private static final float DEFAULT_SHARPSIZE = 0;
+    public static final String RADIUS = "radius";
+    public static final String LEFT_TOP_RADIUS = "left_top_radius";
+    public static final String RIGHT_TOP_RADIUS = "right_top_radius";
+    public static final String RIGHT_BOTTOM_RADIUS = "right_bottom_radius";
+    public static final String LEFT_BOTTOM_RADIUS = "left_bottom_radius";
+    public static final String BORDER = "border";
+    public static final String BORDER_COLOR = "borderColor";
+    public static final String BACKGROUND_COLOR = "backgroundColor";
+    public static final String START_BG_COLOR = "startBgColor";
+    public static final String MIDDLE_BG_COLOR = "middleBgColor";
+    public static final String END_BG_COLOR = "endBgColor";
+    public static final String ARROW_DIRECTION = "arrowDirection";
+    public static final String RELATIVE_POSITION = "relativePosition";
+    public static final String SHARP_SIZE = "sharpSize";
+    private Component mComponent;
+    private float mRadius;
+    private RgbColor mBackgroundColor;
+    private float mRelativePosition;
+    private float mSharpSize;
+    private float mBorder;
+    private RgbColor mBorderColor;
+    private RgbColor[] mBgColors;
+    private float[] mCornerRadii = new float[8];
+    private SharpView.ArrowDirection mArrowDirection = SharpView.ArrowDirection.LEFT;
+    private SharpDrawable mSharpDrawable;
+
+    SharpViewRenderProxy(Component component, AttrSet attrs) {
+        mComponent = component;
+        mRadius = DEFAULT_RADIUS;
+        mCornerRadii[0] = mCornerRadii[1] = DEFAULT_CORNERRADII;
+        mCornerRadii[2] = mCornerRadii[3] = DEFAULT_CORNERRADII;
+        mCornerRadii[4] = mCornerRadii[5] = DEFAULT_CORNERRADII;
+        mCornerRadii[6] = mCornerRadii[7] = DEFAULT_CORNERRADII;
+        mBorder = DEFAULT_BORDER;
+        mBackgroundColor = DEFAULT_BACKGROUNDCOLOR;
+        mBorderColor = DEFAULT_BORDERCOLOR;
+        mRelativePosition = DEFAULT_RELATIVEPOSITION;
+        mSharpSize = DEFAULT_SHARPSIZE;
+
+        if (attrs != null) {
+            initAttributes(attrs);
+        }
+    }
+
+    public SharpDrawable getSharpDrawable() {
+        return mSharpDrawable;
+    }
 
     public float getRadius() {
         return mRadius;
     }
 
-    public int getBackgroundColor() {
+    public RgbColor getBackgroundColor() {
         return mBackgroundColor;
     }
 
@@ -36,11 +88,11 @@ public class SharpViewRenderProxy {
         return mBorder;
     }
 
-    public int getBorderColor() {
+    public RgbColor getBorderColor() {
         return mBorderColor;
     }
 
-    public int[] getBgColors() {
+    public RgbColor[] getBgColors() {
         return mBgColors;
     }
 
@@ -52,26 +104,24 @@ public class SharpViewRenderProxy {
         return mArrowDirection;
     }
 
-    private float mRadius;
-
-    private int mBackgroundColor;
-
-    private float mRelativePosition;
-
-    private float mSharpSize;
-
-    private float mBorder;
-
-    private int mBorderColor;
-
-    public void setBgColor(int[] bgColor) {
+    public void setBgColor(RgbColor[] bgColor) {
         mBgColors = bgColor;
         refreshView();
     }
 
-    private int[] mBgColors;
+    public void setSharpDrawable(SharpDrawable sharpDrawable) {
+        mSharpDrawable = sharpDrawable;
+    }
 
-    public void setCornerRadii(float leftTop,float rightTop,float rightBottom,float leftBottom) {
+    /**
+     * setCornerRadii.
+     *
+     * @param leftTop top left radius.
+     * @param rightTop top right radius.
+     * @param rightBottom bottom right radius.
+     * @param leftBottom bottom left radius.
+     */
+    public void setCornerRadii(float leftTop, float rightTop, float rightBottom, float leftBottom) {
         mCornerRadii[0] = leftTop;
         mCornerRadii[1] = leftTop;
         mCornerRadii[2] = rightTop;
@@ -83,86 +133,14 @@ public class SharpViewRenderProxy {
 
     }
 
-    private float[] mCornerRadii = new float[8];
-
-    private SharpView.ArrowDirection mArrowDirection = SharpView.ArrowDirection.LEFT;
-
     public void setBorder(float border) {
         mBorder = border;
         refreshView();
     }
 
-    public void setBorderColor(int borderColor) {
+    public void setBorderColor(RgbColor borderColor) {
         mBorderColor = borderColor;
         refreshView();
-    }
-
-    SharpViewRenderProxy(View view, Context context, AttributeSet attrs, int defStyleAttr) {
-        mView = view;
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SharpTextView, defStyleAttr, 0);
-        mRadius = a.getDimension(R.styleable.SharpTextView_radius, 0);
-        mCornerRadii[0] = mCornerRadii[1] = a.getDimension(R.styleable.SharpTextView_left_top_radius, 0);
-        mCornerRadii[2] = mCornerRadii[3] = a.getDimension(R.styleable.SharpTextView_right_top_radius, 0);
-        mCornerRadii[4] = mCornerRadii[5] = a.getDimension(R.styleable.SharpTextView_right_bottom_radius, 0);
-        mCornerRadii[6] = mCornerRadii[7] = a.getDimension(R.styleable.SharpTextView_left_bottom_radius, 0);
-        mBorder = a.getDimension(R.styleable.SharpTextView_border, 0);
-        mBackgroundColor = a.getColor(R.styleable.SharpTextView_backgroundColor, 0);
-        mBorderColor = a.getColor(R.styleable.SharpTextView_borderColor, 0);
-        int direction = a.getInt(R.styleable.SharpTextView_arrowDirection, 3);
-        mRelativePosition = a.getFraction(R.styleable.SharpTextView_relativePosition, 1, 1, 0.5f);
-        mSharpSize = a.getDimension(R.styleable.SharpLinearLayout_sharpSize,0);
-        switch (direction) {
-            case 1:
-                mArrowDirection = SharpView.ArrowDirection.LEFT;
-                break;
-            case 2:
-                mArrowDirection = SharpView.ArrowDirection.TOP;
-                break;
-            case 3:
-                mArrowDirection =  SharpView.ArrowDirection.RIGHT;
-                break;
-            case 4:
-                mArrowDirection = SharpView.ArrowDirection.BOTTOM;
-                break;
-        }
-        int start = a.getColor(R.styleable.SharpTextView_startBgColor, -1);
-        int middle  = a.getColor(R.styleable.SharpTextView_middleBgColor, -1);
-        int end  = a.getColor(R.styleable.SharpTextView_endBgColor, -1);
-        if (start != -1  && end != -1) {
-            if (middle != -1) {
-                mBgColors = new int[]{start, middle, end};
-            } else {
-                mBgColors = new int[]{start, end};
-            }
-        }
-        a.recycle();
-        refreshView();
-    }
-
-    SharpDrawable mSharpDrawable;
-
-    private void refreshView() {
-        SharpDrawable bd = new SharpDrawable(GradientDrawable.Orientation.LEFT_RIGHT, null);
-        mSharpDrawable = bd;
-        if (mBgColors != null) {
-            bd.setColors(mBgColors);
-        } else {
-            bd.setBgColor(mBackgroundColor);
-        }
-        bd.setSharpSize(mSharpSize);
-        bd.setArrowDirection(mArrowDirection);
-        bd.setCornerRadius(mRadius);
-        bd.setBorder(mBorder);
-        bd.setBorderColor(mBorderColor);
-        bd.setRelativePosition(mRelativePosition);
-        if (mRadius == 0) {
-            bd.setCornerRadii(mCornerRadii);
-        }
-        if (mView instanceof SharpImageView) {
-            mView.invalidate();
-        } else {
-            mView.setBackground(bd);
-        }
     }
 
     public void setRadius(float radius) {
@@ -170,7 +148,12 @@ public class SharpViewRenderProxy {
         refreshView();
     }
 
-    public void setBackgroundColor(int backgroundColor) {
+    /**
+     * setBackgroundColor.
+     *
+     * @param backgroundColor background color in Rgba format.
+     */
+    public void setBackgroundColor(RgbColor backgroundColor) {
         mBackgroundColor = backgroundColor;
         mBgColors = null;
         refreshView();
@@ -191,4 +174,135 @@ public class SharpViewRenderProxy {
         refreshView();
     }
 
+    private void checkRadiusAttr(AttrSet attrs) {
+        if (attrs.getAttr(RADIUS).isPresent() && attrs.getAttr(RADIUS).get() != null) {
+            mRadius = attrs.getAttr(RADIUS).get().getDimensionValue();
+        }
+
+        if (attrs.getAttr(LEFT_TOP_RADIUS).isPresent() && attrs.getAttr(LEFT_TOP_RADIUS).get() != null) {
+            mCornerRadii[0] = mCornerRadii[1] = attrs.getAttr(LEFT_TOP_RADIUS).get().getDimensionValue();
+        }
+
+        if (attrs.getAttr(RIGHT_TOP_RADIUS).isPresent() && attrs.getAttr(RIGHT_TOP_RADIUS).get() != null) {
+            mCornerRadii[2] = mCornerRadii[3] = attrs.getAttr(RIGHT_TOP_RADIUS).get().getDimensionValue();
+        }
+
+        if (attrs.getAttr(RIGHT_BOTTOM_RADIUS).isPresent() && attrs.getAttr(RIGHT_BOTTOM_RADIUS).get() != null) {
+            mCornerRadii[4] = mCornerRadii[5] = attrs.getAttr(RIGHT_BOTTOM_RADIUS).get().getDimensionValue();
+        }
+
+        if (attrs.getAttr(LEFT_BOTTOM_RADIUS).isPresent() && attrs.getAttr(LEFT_BOTTOM_RADIUS).get() != null) {
+            mCornerRadii[6] = mCornerRadii[7] = attrs.getAttr(LEFT_BOTTOM_RADIUS).get().getDimensionValue();
+        }
+    }
+
+    private void checkBorderAttr(AttrSet attrs) {
+        if (attrs.getAttr(BORDER).isPresent() && attrs.getAttr(BORDER).get() != null) {
+            mBorder = attrs.getAttr(BORDER).get().getDimensionValue();
+        }
+
+        if (attrs.getAttr(BORDER_COLOR).isPresent() && attrs.getAttr(BORDER_COLOR).get() != null) {
+            mBorderColor = new RgbColor(attrs.getAttr(BORDER_COLOR).get().getIntegerValue());
+        }
+    }
+
+    private void checkColorAttr(AttrSet attrs) {
+        if (attrs.getAttr(BACKGROUND_COLOR).isPresent() && attrs.getAttr(BACKGROUND_COLOR).get() != null) {
+            mBackgroundColor = new RgbColor(attrs.getAttr(BACKGROUND_COLOR).get().getIntegerValue());
+        }
+
+        RgbColor start = RgbPalette.TRANSPARENT;
+        RgbColor middle = RgbPalette.TRANSPARENT;
+        RgbColor end = RgbPalette.TRANSPARENT;
+        if (attrs.getAttr(START_BG_COLOR).isPresent() && attrs.getAttr(START_BG_COLOR).get() != null) {
+            start = new RgbColor(attrs.getAttr(START_BG_COLOR).get().getIntegerValue());
+        }
+        if (attrs.getAttr(MIDDLE_BG_COLOR).isPresent() && attrs.getAttr(MIDDLE_BG_COLOR).get() != null) {
+            middle  = new RgbColor(attrs.getAttr(MIDDLE_BG_COLOR).get().getIntegerValue());
+        }
+        if (attrs.getAttr(END_BG_COLOR).isPresent() && attrs.getAttr(END_BG_COLOR).get() != null) {
+            end  = new RgbColor(attrs.getAttr(END_BG_COLOR).get().getIntegerValue());
+        }
+        if (start != RgbPalette.TRANSPARENT  && end != RgbPalette.TRANSPARENT) {
+            if (middle != RgbPalette.TRANSPARENT) {
+                mBgColors = new RgbColor[]{start, middle, end};
+            } else {
+                mBgColors = new RgbColor[]{start, end};
+            }
+        }
+    }
+
+    private void checkSharpAttr(AttrSet attrs) {
+        if (attrs.getAttr(SHARP_SIZE).isPresent() && attrs.getAttr(SHARP_SIZE).get() != null) {
+            mSharpSize = attrs.getAttr(SHARP_SIZE).get().getDimensionValue();
+        }
+
+        if (attrs.getAttr(ARROW_DIRECTION).isPresent() && attrs.getAttr(ARROW_DIRECTION).get() != null) {
+            String direction = attrs.getAttr(ARROW_DIRECTION).get().getStringValue();
+            switch (direction) {
+                case "left":
+                    mArrowDirection = SharpView.ArrowDirection.LEFT;
+                    mComponent.setPaddingLeft((int) mSharpSize);
+                    break;
+                case "top":
+                    mArrowDirection = SharpView.ArrowDirection.TOP;
+                    mComponent.setPaddingTop((int) mSharpSize);
+                    break;
+                case "right":
+                    mArrowDirection =  SharpView.ArrowDirection.RIGHT;
+                    mComponent.setPaddingRight((int) mSharpSize);
+                    break;
+                case "bottom":
+                    mArrowDirection = SharpView.ArrowDirection.BOTTOM;
+                    mComponent.setPaddingBottom((int) mSharpSize);
+                    break;
+                default:
+                    mArrowDirection = SharpView.ArrowDirection.LEFT;
+                    mComponent.setPaddingLeft((int) mSharpSize);
+            }
+        }
+
+        if (attrs.getAttr(RELATIVE_POSITION).isPresent() && attrs.getAttr(RELATIVE_POSITION).get() != null) {
+            mRelativePosition = attrs.getAttr(RELATIVE_POSITION).get().getFloatValue();
+        }
+    }
+
+    private void initAttributes(AttrSet attrs) {
+        checkSharpAttr(attrs);
+        checkColorAttr(attrs);
+        checkBorderAttr(attrs);
+        checkRadiusAttr(attrs);
+        refreshView();
+    }
+
+    private void refreshView() {
+        SharpDrawable bd = new SharpDrawable(ShapeElement.Orientation.LEFT_TO_RIGHT, mComponent);
+        setSharpDrawable(bd);
+        if (mBgColors != null) {
+            bd.setBgColor(mBgColors);
+        } else {
+            bd.setBgColor(mBackgroundColor);
+        }
+        bd.setSharpSize(mSharpSize);
+        bd.setArrowDirection(mArrowDirection);
+        bd.setBorder(mBorder);
+        bd.setBorderColor(mBorderColor);
+        bd.setRelativePosition(mRelativePosition);
+        bd.setCornerRadius(mRadius);
+        if (mRadius == 0) {
+            bd.setCornerRadii(mCornerRadii);
+        }
+        if (mComponent instanceof SharpImageView) {
+            mComponent.invalidate();
+        } else {
+            mComponent.setBackground(bd);
+            mComponent.addDrawTask(new Component.DrawTask() {
+                @Override
+                public void onDraw(Component component, Canvas canvas) {
+                    bd.drawToCanvas(canvas);
+                }
+            }, BETWEEN_BACKGROUND_AND_CONTENT);
+            mComponent.invalidate();
+        }
+    }
 }

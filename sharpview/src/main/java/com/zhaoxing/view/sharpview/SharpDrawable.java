@@ -1,32 +1,65 @@
 package com.zhaoxing.view.sharpview;
 
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.PointF;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.util.Log;
+import ohos.agp.colors.RgbColor;
+import ohos.agp.colors.RgbPalette;
+import ohos.agp.components.Component;
+import ohos.agp.components.Image;
+import ohos.agp.components.element.ShapeElement;
+import ohos.agp.render.Arc;
+import ohos.agp.render.Canvas;
+import ohos.agp.render.Paint;
+import ohos.agp.render.Path;
+import ohos.agp.utils.Color;
+import ohos.agp.utils.Point;
+import ohos.agp.utils.RectFloat;
 
-class SharpDrawable extends GradientDrawable {
+/*
+ * SharpDrawable:
+ * */
+class SharpDrawable extends ShapeElement {
 
+    private float mSharpSize;
+    private RgbColor[] mBgColor;
+    private RgbColor mBackgroundColor;
+    private float mCornerRadius;
+    private float[] mCornerRadii;
+    private SharpView.ArrowDirection mArrowDirection;
+    private float mBorder;
+    private RgbColor mBorderColor;
+    private float mRelativePosition;
+    private Paint mPaint;
+    private RectFloat mRect;
+    private Path mSharpPath;
+    private Point[] mPointFs;
+    private RectFloat[] mOvalRect;
+    private Component mComponent;
 
-    SharpDrawable(Orientation orientation, @ColorInt int[] colors) {
-        super(orientation, colors);
+    SharpDrawable() {
+        super();
         init();
     }
 
-    void setBgColor(int bgColor) {
+    SharpDrawable(Orientation orientation, Component component) {
+        mComponent = component;
+        super.setGradientOrientation(orientation);
+        init();
+    }
+
+    SharpDrawable(Orientation orientation, Component component, RgbColor[] colors) {
+        mComponent = component;
+        super.setRgbColors(colors);
+        super.setGradientOrientation(orientation);
+        init();
+    }
+
+    public void setBgColor(RgbColor[] bgColor) {
         mBgColor = bgColor;
-        super.setColor(bgColor);
+        super.setRgbColors(bgColor);
+    }
+
+    public void setBgColor(RgbColor bgColor) {
+        mBackgroundColor = bgColor;
+        super.setRgbColor(mBackgroundColor);
     }
 
     public void setCornerRadius(float cornerRadius) {
@@ -34,192 +67,249 @@ class SharpDrawable extends GradientDrawable {
         super.setCornerRadius(cornerRadius);
     }
 
-    void setArrowDirection(SharpView.ArrowDirection arrowDirection) {
+    public void setCornerRadii(float[] cornerRadii) {
+        mCornerRadii = cornerRadii;
+        super.setCornerRadiiArray(cornerRadii);
+    }
+
+    public void setArrowDirection(SharpView.ArrowDirection arrowDirection) {
         mArrowDirection = arrowDirection;
     }
 
-    void setRelativePosition(float relativePosition) {
+    public void setRelativePosition(float relativePosition) {
         mRelativePosition = Math.min(Math.max(relativePosition, 0), 1);
     }
 
-    void setBorder(float border) {
+    public void setBorder(float border) {
         mBorder = border;
         super.setStroke((int) mBorder, mBorderColor);
     }
 
-    void setBorderColor(int borderColor) {
+    public void setBorderColor(RgbColor borderColor) {
         mBorderColor = borderColor;
         super.setStroke((int) mBorder, mBorderColor);
     }
 
-    void setSharpSize(float sharpSize) {
+    public void setSharpSize(float sharpSize) {
         mSharpSize = sharpSize;
     }
 
-    private float mSharpSize;
-
-    private int mBgColor;
-
-    private float mCornerRadius;
-
-    private SharpView.ArrowDirection mArrowDirection;
-
-    private float mBorder;
-
-    private int mBorderColor;
-
-    /**
-     * from 0 to 1
-     */
-    private float mRelativePosition;
-
-    void setPaint(Paint paint) {
+    public void setPaint(Paint paint) {
         mPaint = paint;
     }
 
-    private Paint mPaint;
-
-    private RectF mRect;
-
-    private Path mPath;
-
-    private PointF[] mPointFs;
-
-    private RectF mOvalRect[] = new RectF[4];
-
-    SharpDrawable() {
-        super();
-        init();
-    }
-
     private void init() {
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mSharpSize = 0;
+        mBgColor = new RgbColor[]{RgbPalette.CYAN};
+        mBackgroundColor = RgbPalette.CYAN;
+        mCornerRadius = 0;
+        mArrowDirection = SharpView.ArrowDirection.LEFT;
+        mBorder = 0;
+        mBorderColor = RgbPalette.CYAN;
+        mRelativePosition = 0;
+        mPaint = new Paint();
         mPaint.setAntiAlias(true);
-        mRect = new RectF();
-        mPointFs = new PointF[3];
-        mPath = new Path();
-        mPointFs[0] = new PointF();
-        mPointFs[1] = new PointF();
-        mPointFs[2] = new PointF();
+        mRect = new RectFloat();
+        mPointFs = new Point[3];
+        mSharpPath = new Path();
+        mPointFs[0] = new Point();
+        mPointFs[1] = new Point();
+        mPointFs[2] = new Point();
 
-        mOvalRect[0] = new RectF();
-        mOvalRect[1] = new RectF();
-        mOvalRect[2] = new RectF();
-        mOvalRect[3] = new RectF();
+        mOvalRect = new RectFloat[4];
+        mOvalRect[0] = new RectFloat();
+        mOvalRect[1] = new RectFloat();
+        mOvalRect[2] = new RectFloat();
+        mOvalRect[3] = new RectFloat();
     }
-
 
     @Override
-    public void draw(Canvas canvas) {
-        if (mSharpSize == 0) {
-            super.draw(canvas);
-        } else {
-            Rect bounds = getBounds();
-            int left = bounds.left;
-            int top = bounds.top;
-            int right = bounds.right;
-            int bottom = bounds.bottom;
+    public void drawToCanvas(Canvas canvas) {
+        if (mComponent != null && mSharpSize != 0) {
+            int left = 0;
+            int top = 0;
+            int right = mComponent.getWidth();
+            int bottom = mComponent.getHeight();
             float length;
+            int boundLeft = 0;
+            int boundTop = 0;
+            int boundRight = mComponent.getWidth();
+            int boundBottom = mComponent.getHeight();
             switch (mArrowDirection) {
                 case LEFT:
                     left += mSharpSize;
-                    length = Math.max(mRelativePosition * bounds.height() + bounds.top, mSharpSize + mCornerRadius);
-                    length = Math.min(length, bounds.height() - mSharpSize - mCornerRadius);
-                    mPointFs[0].set(bounds.left, length + bounds.top);
-                    mPointFs[1].set(left, mPointFs[0].y - mSharpSize);
-                    mPointFs[2].set(left, mPointFs[0].y + mSharpSize);
-                    mRect.set(left, top, right, bottom);
+                    length = Math.max(mRelativePosition * mComponent.getHeight(), mSharpSize + mCornerRadius);
+                    length = Math.min(length, mComponent.getHeight() - mSharpSize - mCornerRadius);
+                    mPointFs[0].modify(boundLeft, length + boundTop);
+                    mPointFs[1].modify(left, mPointFs[0].getPointY() + mSharpSize);
+                    mPointFs[2].modify(left, mPointFs[0].getPointY() - mSharpSize);
+                    mRect.modify(left, top, right, bottom);
                     break;
                 case TOP:
                     top += mSharpSize;
-                    length = Math.max(mRelativePosition * bounds.width() + bounds.top, mSharpSize + mCornerRadius);
-                    length = Math.min(length, bounds.width() - mSharpSize - mCornerRadius);
-                    mPointFs[0].set(bounds.left + length, bounds.top);
-                    mPointFs[1].set(mPointFs[0].x - mSharpSize, top);
-                    mPointFs[2].set(mPointFs[0].x + mSharpSize, top);
-                    mRect.set(left, top, right, bottom);
+                    length = Math.max(mRelativePosition * mComponent.getWidth(), mSharpSize + mCornerRadius);
+                    length = Math.min(length, mComponent.getWidth() - mSharpSize - mCornerRadius);
+                    mPointFs[0].modify(boundLeft + length, boundTop);
+                    mPointFs[1].modify(mPointFs[0].getPointX() - mSharpSize, top);
+                    mPointFs[2].modify(mPointFs[0].getPointX() + mSharpSize, top);
+                    mRect.modify(left, top, right, bottom);
                     break;
                 case RIGHT:
                     right -= mSharpSize;
-                    length = Math.max(mRelativePosition * bounds.height() + bounds.top, mSharpSize + mCornerRadius);
-                    length = Math.min(length, bounds.height() - mSharpSize - mCornerRadius);
-                    mPointFs[0].set(bounds.right, length + bounds.top);
-                    mPointFs[1].set(right, mPointFs[0].y - mSharpSize);
-                    mPointFs[2].set(right, mPointFs[0].y + mSharpSize);
-                    mRect.set(left, top, right, bottom);
+                    length = Math.max(mRelativePosition * mComponent.getHeight(), mSharpSize + mCornerRadius);
+                    length = Math.min(length, mComponent.getHeight() - mSharpSize - mCornerRadius);
+                    mPointFs[0].modify(boundRight, length + boundTop);
+                    mPointFs[1].modify(right, mPointFs[0].getPointY() - mSharpSize);
+                    mPointFs[2].modify(right, mPointFs[0].getPointY() + mSharpSize);
+                    mRect.modify(left, top, right, bottom);
                     break;
                 case BOTTOM:
                     bottom -= mSharpSize;
-                    length = Math.max(mRelativePosition * bounds.width() + bounds.top, mSharpSize + mCornerRadius);
-                    length = Math.min(length, bounds.width() - mSharpSize - mCornerRadius);
-                    mPointFs[0].set(bounds.left + length, bounds.bottom);
-                    mPointFs[1].set(mPointFs[0].x - mSharpSize, bottom);
-                    mPointFs[2].set(mPointFs[0].x + mSharpSize, bottom);
-                    mRect.set(left, top, right, bottom);
+                    length = Math.max(mRelativePosition * mComponent.getWidth() + boundTop, mSharpSize + mCornerRadius);
+                    length = Math.min(length, mComponent.getWidth() - mSharpSize - mCornerRadius);
+                    mPointFs[0].modify(boundLeft + length, boundBottom);
+                    mPointFs[1].modify(mPointFs[0].getPointX() - mSharpSize, bottom);
+                    mPointFs[2].modify(mPointFs[0].getPointX() + mSharpSize, bottom);
+                    mRect.modify(left, top, right, bottom);
+                    break;
+                default:
                     break;
             }
-            mPath.reset();
-            mPath.addRoundRect(mRect, mCornerRadius, mCornerRadius, Path.Direction.CW);
-            mPath.moveTo(mPointFs[0].x, mPointFs[0].y);
-            mPath.lineTo(mPointFs[1].x, mPointFs[1].y);
-            mPath.lineTo(mPointFs[2].x, mPointFs[2].y);
-            mPath.lineTo(mPointFs[0].x, mPointFs[0].y);
-            mPaint.setColor(mBgColor);
-            canvas.drawPath(mPath, mPaint);
+            mSharpPath.reset();
+            mSharpPath.addRoundRect(mRect, mCornerRadius, mCornerRadius, Path.Direction.CLOCK_WISE);
+            mSharpPath.moveTo(mPointFs[0].getPointX(), mPointFs[0].getPointY());
+            mSharpPath.lineTo(mPointFs[1].getPointX(), mPointFs[1].getPointY());
+            mSharpPath.lineTo(mPointFs[2].getPointX(), mPointFs[2].getPointY());
+            mSharpPath.lineTo(mPointFs[0].getPointX(), mPointFs[0].getPointY());
+            mPaint.setColor(new Color(mBackgroundColor.asRgbaInt()));
+            canvas.drawPath(mSharpPath, mPaint);
 
+            if (mComponent instanceof Image) {
+                return;
+            }
 
-
-            mPaint.setColor(mBorderColor);
-            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setColor(new Color(mBorderColor.asRgbaInt()));
+            mPaint.setStyle(Paint.Style.STROKE_STYLE);
             mPaint.setStrokeWidth(mBorder);
             switch (mArrowDirection) {
                 case LEFT:
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.top,mRect.right - mCornerRadius,mRect.top,mPaint);
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.bottom,mRect.right - mCornerRadius,mRect.bottom,mPaint);
-                    canvas.drawLine(mRect.right,mRect.top + mCornerRadius,mRect.right,mRect.bottom - mCornerRadius,mPaint);
-                    canvas.drawLine(mRect.left,mRect.top + mCornerRadius,mRect.left,mPointFs[1].y,mPaint);
-                    canvas.drawLine(mRect.left,mPointFs[2].y,mRect.left,mRect.bottom - mCornerRadius,mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.top, mRect.right - mCornerRadius,
+                            mRect.top, mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.bottom, mRect.right - mCornerRadius,
+                            mRect.bottom, mPaint);
+                    canvas.drawLine(mRect.right, mRect.top + mCornerRadius, mRect.right, mRect.bottom - mCornerRadius,
+                            mPaint);
+                    canvas.drawLine(mRect.left, mRect.top + mCornerRadius, mRect.left, mPointFs[1].getPointY(), mPaint);
+                    canvas.drawLine(mRect.left, mPointFs[2].getPointY(), mRect.left, mRect.bottom - mCornerRadius,
+                            mPaint);
                     break;
                 case TOP:
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.bottom,mRect.right - mCornerRadius,mRect.bottom,mPaint);
-                    canvas.drawLine(mRect.left,mRect.top + mCornerRadius,mRect.left,mRect.bottom - mCornerRadius,mPaint);
-                    canvas.drawLine(mRect.right,mRect.top + mCornerRadius,mRect.right,mRect.bottom - mCornerRadius,mPaint);
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.top,mPointFs[1].x,mRect.top,mPaint);
-                    canvas.drawLine(mPointFs[2].x, mRect.top, mRect.right - mCornerRadius, mRect.top, mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.bottom, mRect.right - mCornerRadius,
+                            mRect.bottom, mPaint);
+                    canvas.drawLine(mRect.left, mRect.top + mCornerRadius, mRect.left, mRect.bottom - mCornerRadius,
+                            mPaint);
+                    canvas.drawLine(mRect.right, mRect.top + mCornerRadius, mRect.right, mRect.bottom - mCornerRadius,
+                            mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.top, mPointFs[1].getPointX(), mRect.top, mPaint);
+                    canvas.drawLine(mPointFs[2].getPointX(), mRect.top, mRect.right - mCornerRadius, mRect.top, mPaint);
                     break;
                 case RIGHT:
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.top,mRect.right - mCornerRadius,mRect.top,mPaint);
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.bottom,mRect.right - mCornerRadius,mRect.bottom,mPaint);
-                    canvas.drawLine(mRect.left,mRect.top + mCornerRadius,mRect.left,mRect.bottom - mCornerRadius,mPaint);
-                    canvas.drawLine(mRect.right,mRect.top + mCornerRadius,mRect.right,mPointFs[1].y,mPaint);
-                    canvas.drawLine(mRect.right,mPointFs[2].y,mRect.right,mRect.bottom - mCornerRadius,mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.top, mRect.right - mCornerRadius,
+                            mRect.top, mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.bottom, mRect.right - mCornerRadius,
+                            mRect.bottom, mPaint);
+                    canvas.drawLine(mRect.left, mRect.top + mCornerRadius, mRect.left, mRect.bottom - mCornerRadius,
+                            mPaint);
+                    canvas.drawLine(mRect.right, mRect.top + mCornerRadius, mRect.right, mPointFs[1].getPointY(),
+                            mPaint);
+                    canvas.drawLine(mRect.right, mPointFs[2].getPointY(), mRect.right, mRect.bottom - mCornerRadius,
+                            mPaint);
                     break;
                 case BOTTOM:
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.top,mRect.right - mCornerRadius,mRect.top,mPaint);
-                    canvas.drawLine(mRect.left,mRect.top + mCornerRadius,mRect.left,mRect.bottom - mCornerRadius,mPaint);
-                    canvas.drawLine(mRect.right,mRect.top + mCornerRadius,mRect.right,mRect.bottom - mCornerRadius,mPaint);
-                    canvas.drawLine(mRect.left + mCornerRadius,mRect.bottom,mPointFs[1].x,mRect.bottom,mPaint);
-                    canvas.drawLine(mPointFs[2].x, mRect.bottom, mRect.right - mCornerRadius, mRect.bottom, mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.top, mRect.right - mCornerRadius,
+                            mRect.top, mPaint);
+                    canvas.drawLine(mRect.left, mRect.top + mCornerRadius, mRect.left, mRect.bottom - mCornerRadius,
+                            mPaint);
+                    canvas.drawLine(mRect.right, mRect.top + mCornerRadius, mRect.right, mRect.bottom - mCornerRadius,
+                            mPaint);
+                    canvas.drawLine(mRect.left + mCornerRadius, mRect.bottom, mPointFs[1].getPointX(), mRect.bottom,
+                            mPaint);
+                    canvas.drawLine(mPointFs[2].getPointX(), mRect.bottom, mRect.right - mCornerRadius, mRect.bottom,
+                            mPaint);
+                    break;
+                default:
                     break;
             }
 
             if (mCornerRadius > 0) {
                 float d = 2 * mCornerRadius;
 
-                mOvalRect[0].set(mRect.left,mRect.top,mRect.left + d,mRect.top + d);
-                mOvalRect[1].set(mRect.right - d,mRect.top,mRect.right,mRect.top + d);
-                mOvalRect[2].set(mRect.left,mRect.bottom - d,mRect.left + d,mRect.bottom);
-                mOvalRect[3].set(mRect.right - d,mRect.bottom - d,mRect.right,mRect.bottom);
-                canvas.drawArc(mOvalRect[0],180,90,false,mPaint);
-                canvas.drawArc(mOvalRect[1],-90,90,false,mPaint);
-                canvas.drawArc(mOvalRect[2],90,90,false,mPaint);
-                canvas.drawArc(mOvalRect[3],90,-90,false,mPaint);
+                mOvalRect[0].modify(mRect.left, mRect.top, mRect.left + d, mRect.top + d);
+                mOvalRect[1].modify(mRect.right - d, mRect.top, mRect.right, mRect.top + d);
+                mOvalRect[2].modify(mRect.left, mRect.bottom - d, mRect.left + d, mRect.bottom);
+                mOvalRect[3].modify(mRect.right - d, mRect.bottom - d, mRect.right, mRect.bottom);
+                canvas.drawArc(mOvalRect[0], new Arc(180, 90, false), mPaint);
+                canvas.drawArc(mOvalRect[1], new Arc(-90, 90, false), mPaint);
+                canvas.drawArc(mOvalRect[2], new Arc(90, 90, false), mPaint);
+                canvas.drawArc(mOvalRect[3], new Arc(90, -90, false), mPaint);
             }
 
-            canvas.drawLine(mPointFs[0].x, mPointFs[0].y, mPointFs[1].x, mPointFs[1].y, mPaint);
-            canvas.drawLine(mPointFs[0].x, mPointFs[0].y, mPointFs[2].x, mPointFs[2].y, mPaint);
-
+            canvas.drawLine(mPointFs[0].getPointX(), mPointFs[0].getPointY(), mPointFs[1].getPointX(),
+                    mPointFs[1].getPointY(), mPaint);
+            canvas.drawLine(mPointFs[0].getPointX(), mPointFs[0].getPointY(), mPointFs[2].getPointX(),
+                    mPointFs[2].getPointY(), mPaint);
         }
     }
 
+    public float getSharpSize() {
+        return mSharpSize;
+    }
+
+    public RgbColor[] getBgColor() {
+        return mBgColor;
+    }
+
+    public RgbColor getBackgroundColor() {
+        return mBackgroundColor;
+    }
+
+    public float getCornerRadius() {
+        return mCornerRadius;
+    }
+
+    public float[] getCornerRadii() {
+        return mCornerRadii;
+    }
+
+    public SharpView.ArrowDirection getArrowDirection() {
+        return mArrowDirection;
+    }
+
+    public float getBorder() {
+        return mBorder;
+    }
+
+    public RgbColor getBorderColor() {
+        return mBorderColor;
+    }
+
+    public float getRelativePosition() {
+        return mRelativePosition;
+    }
+
+    public Paint getPaint() {
+        return mPaint;
+    }
+
+    public RectFloat getRect() {
+        return mRect;
+    }
+
+    public Point[] getPointFs() {
+        return mPointFs;
+    }
+
+    public Component getComponent() {
+        return mComponent;
+    }
 }

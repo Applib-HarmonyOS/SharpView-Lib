@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:orientation="vertical"
+    xmlns:app = "style">
+
+    <com.zhaoxing.view.sharpview.SharpImageView
+        ohos:width="150vp"
+        ohos:height="150vp"
+        ohos:top_margin="50vp"
+        ohos:layout_alignment="center"
+        ohos:scale_mode="center"
+        ohos:image_src="$media:test"
+        app:radius="20vp"
+        app:backgroundColor="#FF0000FF"
+        app:relativePosition="0.5"
+        app:arrowDirection="right"
+        app:sharpSize="20vp"
+        />
+
+    <com.zhaoxing.view.sharpview.SharpTextView
+        ohos:width="match_content"
+        ohos:height="match_content"
+        ohos:layout_alignment="center"
+        ohos:padding="20vp"
+        ohos:text="54654654"
+        ohos:text_size="20vp"
+        ohos:text_color="#FFFFFF"
+        app:radius="20vp"
+        app:startBgColor="#ff0000ff"
+        app:middleBgColor="#ff1493ff"
+        app:endBgColor="#ffff00ff"
+        />
+
+    <com.zhaoxing.view.sharpview.SharpEditText
+        ohos:width="200vp"
+        ohos:height="70vp"
+        ohos:layout_alignment="center"
+        ohos:text_color="#FFFFFF"
+        ohos:text="this is a SharpEditText"
+        ohos:text_size="20vp"
+        app:backgroundColor="#FFFF0000"
+        app:arrowDirection="left"
+        app:relativePosition="0.5"
+        ohos:text_alignment="center"
+        app:sharpSize="10vp"
+        />
+
+    <com.zhaoxing.view.sharpview.SharpLinearLayout
+        ohos:width="300vp"
+        ohos:height="100vp"
+        ohos:orientation="vertical"
+        ohos:layout_alignment="center"
+        ohos:top_margin="30vp"
+        app:radius="10vp"
+        app:arrowDirection="right"
+        app:border="3vp"
+        app:borderColor="#FFFF0000"
+        app:backgroundColor="#FF000000"
+        app:relativePosition="0.5"
+        app:sharpSize="20vp">
+
+        <Text
+            ohos:width="match_content"
+            ohos:height="match_content"
+            ohos:margin="10vp"
+            ohos:text_color="#FFFFFF"
+            ohos:text_size="15vp"
+            ohos:background_element="#00FF00"
+            ohos:text="a child inside the SharpLinearLayout"
+            />
+
+        <Text
+            ohos:width="match_content"
+            ohos:height="match_content"
+            ohos:margin="10vp"
+            ohos:text_color="#0000FF"
+            ohos:text_size="20vp"
+            ohos:text="this is another child view"
+            />
+
+    </com.zhaoxing.view.sharpview.SharpLinearLayout>
+
+</DirectionalLayout>
