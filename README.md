@@ -49,6 +49,14 @@ Gradient colors are only valid when sharpSize is 0 (no sharp corners)
 	}
 
 ```
+3. For using SharpView from a remote repository in separate application, add the below dependencies in entry/build.gradle file.
+```groovy
+	dependencies {
+		implementation 'dev.applibgroup:sharpview:1.0.0'
+		testCompile 'junit:junit:4.12'
+	}
+
+```
 
 ## Usage
 
